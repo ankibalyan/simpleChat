@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>sf.Chat</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.2.0/material.lime-orange.min.css" />
+	<script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
+</head>
+<body id="chat">
+	<div id="live_chat">
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+					<!-- Title -->
+	  				<span class="mdl-layout-title">Live Chat</span>
+
+	  				<div class="mdl-layout-spacer"></div>
+
+	  				<button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" id="hdrbtn">
+					  <i class="material-icons">more_vert</i>
+					</button>
+					<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu" for="hdrbtn">
+					  <li class="mdl-menu__item">Show User List</li>
+					  <li class="mdl-menu__item">Pop Out</li>
+					</ul>
+				</div>
+			</header>
+			<main>
+				<div class="message" v-for="message in messages">
+					{{ message[2] }}
+				</div>
+				<form v-on:submit="send">
+					<input type="text" name="" id="message" v-model="message" />
+					<button>send</button>
+				</form>
+			</main>
+		</div>
+	</div>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/bower_components/vue/dist/vue.min.js"></script>
+	<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+	<script>
+		var channel = "General";
+		var userId = "2";
+		var userName = "Ankit";
+	</script>
+	<script>
+		var socket = io('http://localhost:3000');
+		new Vue({
+			el: '#chat',
+
+			data: {
+				messages: [],
+				message: null
+			},
+			ready: function() {
+				socket.on('connect',function () {
+					socket.emit('join',[channel,userId,userName]);
+					console.log('connected to sfChat server.');
+				});
+
+				socket.on('chat.' + channel,function(payload) {
+					this.messages.push(['chat',payload[1],payload[2]]);
+					console.log(this.messages);
+				}.bind(this));
+			},
+			methods: {
+				send: function(e) {
+					e.preventDefault();
+					var payload = [channel,userId,this.message];
+
+					if(this.message == ''){
+						this.message = null;	
+					}
+					if(this.message !== null){
+						socket.emit('chat',payload);
+					}
+
+					this.message = null;
+				}
+			}
+		});
+	</script>
+</body>
+</html>

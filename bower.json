@@ -1,0 +1,29 @@
+{
+  "name": "sf-chat",
+  "description": "a Nodejs and socket.io based real time chat application",
+  "main": "index.js",
+  "authors": [
+    "Ankit Kumar"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "real",
+    "time",
+    "live",
+    "chat",
+    "application"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "socket.io": "^1.4.8",
+    "jquery": "^3.1.0",
+    "vue": "^1.0.26"
+  }
+}
